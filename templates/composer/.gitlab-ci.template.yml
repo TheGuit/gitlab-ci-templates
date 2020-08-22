@@ -1,0 +1,54 @@
+---
+variables:
+  GCT_CI_COMPOSER_PROJECT_DIR: "$CI_PROJECT_DIR"
+  GCT_CI_COMPOSER_CACHE_FOLDER: "$CI_PROJECT_DIR/.cache/.composer"
+  GCT_CI_COMPOSER_CLI_OPTIONS: >-
+    --ignore-platform-reqs
+    --no-progress
+    --no-dev
+    --no-suggest
+    --no-interaction
+    --no-scripts
+    --optimize-autoloader
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .cache/
+
+.composer-template:
+  image:
+    name: ${GCT_CI_HUB_PATH}/php-builder-7.4:latest
+    entrypoint: [""]
+  before_script:
+    - cd $GCT_CI_COMPOSER_PROJECT_DIR
+    - composer config cache-dir "$GCT_CI_COMPOSER_CACHE_FOLDER"
+
+.composer-validate-template:
+  extends: .composer-template
+  script:
+    - |
+      cd $GCT_CI_COMPOSER_PROJECT_DIR
+      composer validate $GCT_CI_COMPOSER_CLI_OPTIONS
+
+.composer-build-template:
+  extends: .composer-template
+  script:
+    - |
+      cd $GCT_CI_COMPOSER_PROJECT_DIR
+      composer install $GCT_CI_COMPOSER_CLI_OPTIONS
+
+
+.composer-yarn-build-template:
+  extends: .composer-build-template
+  image:
+    name: ${GCT_CI_HUB_PATH}/php-builder-7.4-node-12:latest
+    entrypoint: [""]
+  variables:
+    YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/.cache/yarn/v6"
+  script:
+    - |
+      cd $GCT_CI_COMPOSER_PROJECT_DIR
+      composer install $GCT_CI_COMPOSER_CLI_OPTIONS
+      yarn install --frozen-lockfile
+      yarn run build
