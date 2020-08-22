@@ -1,0 +1,24 @@
+yamllint-build:
+  stage: build
+  extends: .kaniko-build-template
+  only:
+    changes:
+      - docker/yamllint/**/*
+  variables:
+    GCT_CI_DOCKER_CONTEXT_PATH: $CI_PROJECT_DIR/docker/yamllint
+    GCT_CI_DOCKERFILE_NAME: Dockerfile
+    GCT_CI_IMAGE_NAME: yamllint
+
+yamllint-release-image-latest:
+  stage: release
+  only:
+    refs:
+      - master
+      - tags
+    changes:
+      - docker/yamllint/**/*
+  extends: .kaniko-release-template
+  variables:
+    GCT_CI_DOCKER_CONTEXT_PATH: $CI_PROJECT_DIR/docker/yamllint
+    GCT_CI_DOCKERFILE_NAME: Dockerfile
+    GCT_CI_IMAGE_NAME: yamllint
