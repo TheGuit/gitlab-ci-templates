@@ -1,0 +1,20 @@
+---
+test-all-templates:
+  stage: test
+  image:
+    name: ${GCT_CI_HUB_PATH}/yamllint:latest
+    entrypoint: [""]
+  only:
+    changes:
+      - templates/**/*
+  script:
+    - |
+      YAMLFILES=$(find ./templates/ -type f -name '*.yml' -o -name '*.yaml')
+      ERRORS=0
+      for yml in $YAMLFILES; do
+        yamllint $yml
+        if [ $? != 0 ]; then
+          ((ERRORS=ERRORS+1))
+        fi
+      done
+      exit $ERRORS
