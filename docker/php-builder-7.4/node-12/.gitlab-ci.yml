@@ -1,0 +1,24 @@
+php-builder-7.4-node-12-build:
+  stage: build-specialized
+  extends: .kaniko-build-template
+  only:
+    changes:
+      - docker/php-builder-7.4/node-12/**/*
+  variables:
+    GCT_CI_DOCKER_CONTEXT_PATH: $CI_PROJECT_DIR/docker/php-builder-7.4/node-12
+    GCT_CI_DOCKERFILE_NAME: Dockerfile
+    GCT_CI_IMAGE_NAME: php-builder-7.4-node-12
+
+php-builder-7.4-node-12-release-image-latest:
+  stage: release
+  only:
+    refs:
+      - master
+      - tags
+    changes:
+      - docker/php-builder-7.4/node-12/**/*
+  extends: .kaniko-release-template
+  variables:
+    GCT_CI_DOCKER_CONTEXT_PATH: $CI_PROJECT_DIR/docker/php-builder-7.4/node-12
+    GCT_CI_DOCKERFILE_NAME: Dockerfile
+    GCT_CI_IMAGE_NAME: php-builder-7.4-node-12
