@@ -1,0 +1,25 @@
+---
+variables:
+  GCT_CI_APP_VERSION_FILE: .project.version
+  GCT_CI_APP_VERSION_FILE_EXPIRE: '30 days'
+
+.get-version-git-template:
+  extends: .get-version-template
+  before_script:
+    - VERSION="$(git describe --always)"
+
+.get-version-composer-template:
+  extends: .get-version-template
+  before_script:
+    - VERSION="$(cat composer.json | jq -r '.version')"
+
+.get-version-template:
+  image:
+    name: ${GCT_CI_HUB_PATH}/git-tools:latest
+    entrypoint: [""]
+  artifacts:
+    paths:
+      - $GCT_CI_APP_VERSION_FILE
+    expire_in: '30 days' # https://gitlab.com/gitlab-org/gitlab-runner/issues/6412 → to be replaced by $GCT_CI_APP_VERSION_FILE_EXPIRE
+  script:
+    - echo "$VERSION" > $GCT_CI_APP_VERSION_FILE
