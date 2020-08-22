@@ -1,0 +1,25 @@
+---
+.shellcheck-find-test-template:
+  extends: .shellcheck-test-template
+  before_script:
+    - FILES=$(find . -executable -type f ! -wholename '*/.git/*')
+
+.shellcheck-git-test-template:
+  extends: .shellcheck-test-template
+  before_script:
+    - FILES=$(git ls-files --exclude='*.sh' --ignored)
+
+.shellcheck-test-template:
+  image:
+    name: ${GCT_CI_HUB_PATH}/shellcheck:latest
+    entrypoint: [""]
+  script:
+    - |
+      ERRORS=0
+      for sh in $FILES; do
+        shellcheck $sh
+        if [ $? != 0 ]; then
+          ((ERRORS=ERRORS+1))
+        fi
+      done
+      exit $ERRORS
