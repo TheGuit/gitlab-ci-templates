@@ -1,0 +1,9 @@
+= Template for Gitlab CI
+
+image::gitlab-ci-cd-logo.png[]
+
+== Goals
+
+This repository contains templates with step to be imported in gitlab-ci.
+
+Feel free to reuse, contribute or comments.
