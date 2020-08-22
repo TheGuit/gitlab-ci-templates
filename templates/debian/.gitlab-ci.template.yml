@@ -1,0 +1,13 @@
+---
+variables:
+  GCT_CI_DEB_INPUT_FOLER: $CI_PROJECT_DIR/debian
+  GCT_CI_DEB_OUTPUT_FOLDER: /deb-packages
+  GCT_CI_DEB_VERSION: 0.0.0
+
+.debian-build-template:
+  stage: test
+  image:
+    name: ${GCT_CI_HUB_PATH}/deb-helper:latest
+    entrypoint: [""]
+  script:
+    - /deb-helper "${GCT_CI_DEB_INPUT_FOLER}" "${GCT_CI_DEB_OUTPUT_FOLDER}" "${GCT_CI_DEB_VERSION}"
