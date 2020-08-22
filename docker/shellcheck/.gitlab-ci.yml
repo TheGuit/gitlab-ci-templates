@@ -1,0 +1,24 @@
+shellcheck-build:
+  stage: build
+  extends: .kaniko-build-template
+  only:
+    changes:
+      - docker/shellcheck/**/*
+  variables:
+    GCT_CI_DOCKER_CONTEXT_PATH: $CI_PROJECT_DIR/docker/shellcheck
+    GCT_CI_DOCKERFILE_NAME: Dockerfile
+    GCT_CI_IMAGE_NAME: shellcheck
+
+shellcheck-release-image-latest:
+  stage: release
+  only:
+    refs:
+      - master
+      - tags
+    changes:
+      - docker/shellcheck/**/*
+  extends: .kaniko-release-template
+  variables:
+    GCT_CI_DOCKER_CONTEXT_PATH: $CI_PROJECT_DIR/docker/shellcheck
+    GCT_CI_DOCKERFILE_NAME: Dockerfile
+    GCT_CI_IMAGE_NAME: shellcheck
